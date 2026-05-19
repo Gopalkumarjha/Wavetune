@@ -240,26 +240,41 @@ const Search = () => {
   }, [query]);
 
   const doSearch = async (q) => {
-    setLoading(true);
-    setError(null);
-    setSearched(true);
-    const [ytRes, dbRes] = await Promise.allSettled([
-      axios.get(`/api/youtube/search/${encodeURIComponent(q)}`),
-      songAPI.getAll({ search: q }),
-    ]);
-    if (ytRes.status === 'rejected') {
-  console.error(ytRes.reason);
+  setLoading(true);
+  setError(null);
+  setSearched(true);
 
-  if (ytRes.reason?.code === 'ECONNABORTED') {
-    setError('Backend waking up... try again in 30 seconds.');
-  } else {
-    setError(ytRes.reason?.message || 'Search failed');
+  const [ytRes, dbRes] = await Promise.allSettled([
+    axios.get(
+      `https://wavetune-i8hy.onrender.com/api/youtube/search/${encodeURIComponent(q)}`
+    ),
+    songAPI.getAll({ search: q }),
+  ]);
+
+  setYtResults(
+    ytRes.status === 'fulfilled'
+      ? ytRes.value.data.results || []
+      : []
+  );
+
+  setDbResults(
+    dbRes.status === 'fulfilled'
+      ? dbRes.value.data || []
+      : []
+  );
+
+  if (ytRes.status === 'rejected') {
+    console.error(ytRes.reason);
+
+    if (ytRes.reason?.code === 'ECONNABORTED') {
+      setError('Backend waking up... try again in 30 seconds.');
+    } else {
+      setError(ytRes.reason?.message || 'Search failed');
+    }
   }
-}
-  const searchGenre = (label) => {
-    setQuery(label);
-    inputRef.current?.focus();
-  };
+
+  setLoading(false);
+};
 
   const hasResults = ytResults.length > 0 || dbResults.length > 0;
 
