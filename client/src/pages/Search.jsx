@@ -220,6 +220,9 @@ const Search = () => {
 
   const inputRef    = useRef(null);
   const debounceRef = useRef(null);
+  const searchGenre = (genre) => {
+  doSearch(genre.label);
+};
 
   useEffect(() => {
     inputRef.current?.focus();
