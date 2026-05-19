@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: '/api' });
+const API = axios.create({
+  baseURL: 'https://wavetune-i8hy.onrender.com/api'
+});
 
 // Auto-attach JWT token on every request
 API.interceptors.request.use(cfg => {
