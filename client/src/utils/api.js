@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://wavetune-i8hy.onrender.com/api'
+  baseURL: 'https://wavetune-i8hy.onrender.com/api',
+  timeout: 60000, // 60s to survive cold starts
 });
 
 // Auto-attach JWT token on every request

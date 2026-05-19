@@ -247,14 +247,15 @@ const Search = () => {
       axios.get(`/api/youtube/search/${encodeURIComponent(q)}`),
       songAPI.getAll({ search: q }),
     ]);
-    setYtResults(ytRes.status === 'fulfilled' ? ytRes.value.data.results || [] : []);
-    setDbResults(dbRes.status === 'fulfilled' ? dbRes.value.data || [] : []);
     if (ytRes.status === 'rejected') {
-      setError('YouTube search unavailable — make sure the backend is running.');
-    }
-    setLoading(false);
-  };
+  console.error(ytRes.reason);
 
+  if (ytRes.reason?.code === 'ECONNABORTED') {
+    setError('Backend waking up... try again in 30 seconds.');
+  } else {
+    setError(ytRes.reason?.message || 'Search failed');
+  }
+}
   const searchGenre = (label) => {
     setQuery(label);
     inputRef.current?.focus();
